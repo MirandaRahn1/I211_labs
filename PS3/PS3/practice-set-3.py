@@ -15,15 +15,19 @@ import os
 
 # fuction definition
 def directory_choice():
-    my_list = (os.listdir(os.path.join(home, '')))
-    return my_list
+    my_list = (os.listdir(os.path.join(home)))
+    # checking if it is a directory 
+    for my_list in (os.listdir(home)):
+        # printing only the directories, not the files
+        if (os.path.isdir(my_list)):
+            print(my_list, end='   ')
 
-# ask user to chose directory and display the directories
 home=os.getcwd()
+# ask user to chose directory and display the directories
 print('Current Directories:')
 my_list = directory_choice()
-print(directory_choice())
-user_input = input('Please select a directory: ')
+#print(directory_choice())
+user_input = input('\nPlease select a directory: ')
 
 # If the user gives you something that isn’t valid (isn’t a directory name), 
 # ask again until it’s a valid directory name.

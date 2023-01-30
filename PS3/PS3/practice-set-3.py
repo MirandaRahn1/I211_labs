@@ -31,7 +31,7 @@ user_input = input('Please select a directory: ')
 # checking if user inputs a valid directory
 for my_list in (os.listdir(home)):
     if (os.path.isdir(user_input)):
-        print('Selected directory: ', user_input)
+        print('Selected directory:', user_input)
         break
     else:
         print('That is not a valid directory, try again')
@@ -52,8 +52,6 @@ for my_list in (os.listdir(home)):
 # file-4.txt, file-5.txt and file-6.txt
 
 
-
-
 # PS 3.3
 # Expand your code from PS 3.1 by writing a new function print_files()
 # In your main, once you have selected a valid directory (PS 3.1):
@@ -61,14 +59,17 @@ for my_list in (os.listdir(home)):
 # and then print out all valid file names
 # (each file name should print on its own line, do not print any directories)
 
-# def print_files():
-    # print the files
+# print files function
+def print_files():
+    # move into selected directory
+    new_directory = os.chdir(os.path.join(os.getcwd(), user_input))
+    for file in os.listdir(new_directory):
+        if os.path.isfile(file):
+            print(file)
 
-# move into selected directory
-# new_directory = os.chdir(os.path.join(os.getcwd(), user_input))
-# for file in os.listdir(new_directory):
-#     if os.path.isfile(file):
-#         print(file, end=" ")
+# call function
+print('Available files:')
+print_files()
 
 # Example output:
 # Current Directories:

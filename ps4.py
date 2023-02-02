@@ -125,7 +125,7 @@ print(safe_load_file("cheeses.txt"))
 
 
 def to_nested_list(string_data):
-    pass
+    contents = contents.replace('(', '').replace(')', '').replace(',', '')
 
 
 # PS 4.3

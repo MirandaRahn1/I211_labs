@@ -102,14 +102,14 @@ import csv
 
 
 def safe_load_file(file_path: str) -> str:
-    try: 
-        pass
+    try:
+        with open('cheeses-corrupted.txt', 'r') as file_path:
+            data = file_path.read()
+            return data
     except FileNotFoundError:
-        print("No such file or directory")
+        return ' '
 
-print(safe_load_file("cheeses.txt"))
-
-
+print(safe_load_file('cheeses.txt'))
 
 
 # PS 4.2

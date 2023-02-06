@@ -81,7 +81,7 @@ print(list_to_string([1, 2, 3]))
    clean up any debugging code you wrote. Your final
    implementation should *only* print the result of PS 4.6
 """
-import csv
+from operator import itemgetter
 
 # PS 4.1
 # ------
@@ -100,16 +100,18 @@ import csv
 # - Use `try` and `except FileNotFoundError` to catch the error.
 # - The `os` module is an alternative way to approach this.
 
-
 def safe_load_file(file_path: str) -> str:
     try:
-        with open('cheeses-corrupted.txt', 'r') as file_path:
-            data = file_path.read()
+        # if files does exist, open file and print as string
+        with open(file_path, 'r') as file:
+            data = file.read()
             return data
+    # if file does not exist, print empty string
     except FileNotFoundError:
-        return ' '
+        return ''
 
-print(safe_load_file('cheeses.txt'))
+# test print statement 
+# print(safe_load_file('cheeses-corrupted.txt'))
 
 
 # PS 4.2
@@ -123,9 +125,14 @@ print(safe_load_file('cheeses.txt'))
 # >>> to_nested_list("\t\troquefort, french\nroquefort, french")
 # [['roquefort', 'french'], ['roquefort', 'french']]
 
-
 def to_nested_list(string_data):
-    pass
+    # cleaning up the data
+    data = string_data.split('\n')
+    # list comprehension to make it print on one line
+    return [i.strip(' \t').split(', ') for i in data if i != '']
+
+# test print statement
+# print(to_nested_list("\t\troquefort, french\nroquefort, french"))
 
 
 # PS 4.3
@@ -140,10 +147,24 @@ def to_nested_list(string_data):
 # >>> nested_lists_to_dict([["roquefort", "france"], ["roquefort", "france"], ["feta", "greece"], ["brie", "france"]])
 # {'france': ['roquefort', 'brie'], 'greece': ['feta']}
 
-
 def nested_lists_to_dict(input_lol):
-    pass
+    # create empty dictionary 
+    cheese_dict = {}
+    for i in input_lol:
+        # unpacking the data
+        cheese, country = i[0], i[1]
+        if country not in cheese_dict: 
+            # replace value
+            cheese_dict[country] = [cheese]
+        elif cheese not in cheese_dict[country]:
+            # add value 
+            cheese_dict[country].append(cheese)
+    # return dictionary
+    return cheese_dict
 
+# test print statement
+# print(nested_lists_to_dict([["roquefort", "france"], ["roquefort", "france"], ["feta", "greece"], ["brie", "france"]]))
+        
 
 # PS 4.4
 # ------
@@ -164,9 +185,27 @@ def nested_lists_to_dict(input_lol):
 # a newline. Make sure this function *returns* a string,
 # *printing* the output directly will cause an error!
 
-
+# **key = countries | value = cheese**
 def format_dict_of_lists(input_dol):
-    pass
+    # create empty string
+    my_string = ''
+    # convert to list
+    countries = list(input_dol.keys())
+    # sort keys
+    countries.sort()
+    for country in countries:
+        my_string = my_string + country + ':\n' 
+        cheeses = input_dol[country]
+        # sort values
+        cheeses.sort()
+        for cheese in cheeses:
+            # formatting using tab
+            my_string = my_string + '\t' + cheese + '\n'
+    # return string value 
+    return my_string
+
+# test print statement
+#print(format_dict_of_lists({'france': ['roquefort', 'brie'], 'greece': ['feta', 'halloumi']}))
 
 
 # PS 4.5
@@ -180,9 +219,21 @@ def format_dict_of_lists(input_dol):
 # >>> summarize_dict_of_lists({'france': ['roquefort', 'brie'], 'greece': ['feta']})
 # [('france', 2), ('greece', 1)]
 
-
 def summarize_dict_of_lists(input_dol):
-    pass
+    # create empty list 
+    my_list = []
+    for countries, cheese in input_dol.items():
+        # get length of list of values
+        cheese_len = len(cheese)
+        # add to list as tuple
+        my_list.append((countries, cheese_len))
+        # sort the list
+        sorted_list = sorted(my_list, key=itemgetter(1), reverse=True)
+    # return list
+    return sorted_list
+
+# test print statement  
+# print(summarize_dict_of_lists({'france': ['roquefort', 'brie'], 'greece': ['feta']}))
 
 
 # PS 4.6
@@ -192,8 +243,8 @@ def summarize_dict_of_lists(input_dol):
 # Running this file using the "Run Python File" button
 # (triangle in the top right), or invoking from the terminal
 # with `python ps4.py` should now display the cheeses.
-#
-# if __name__ == "__main__":
-#     cheeses = nested_lists_to_dict(to_nested_list(safe_load_file("cheeses-corrupted.txt")))
-#     print(format_dict_of_lists(cheeses))
-#     print(summarize_dict_of_lists(cheeses))
+
+if __name__ == "__main__":
+    cheeses = nested_lists_to_dict(to_nested_list(safe_load_file("cheeses-corrupted.txt")))
+    print(format_dict_of_lists(cheeses))
+    print(summarize_dict_of_lists(cheeses))

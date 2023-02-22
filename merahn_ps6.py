@@ -23,7 +23,7 @@ summarize our findings.
 """
 
 import re
-
+import csv
 
 # PS 6.1
 # ------
@@ -93,7 +93,7 @@ def lesson_4(input_string):
 
 def lesson_5(input_string):
     # https://regexone.com/lesson/character_ranges
-    pattern = r"[A-C][n-p][a-c]"
+    pattern = r"[A-C]"
     return re.search(pattern, input_string)
 
 
@@ -208,12 +208,14 @@ def lesson_15(input_string):
 def safe_load_file(file_name):
     try:
         # if files does exist, open file and print as string
-        with open(file_name, 'r') as file:
+        with open(file_name, "r", encoding="utf-8-sig") as file:
             data = file.read()
-            return data
-    # if file does not exist, print empty string
-    except FileNotFoundError:
+            return data 
+    # if file does not exist, return empty string
+    except:
         return ''
+
+# print(safe_load_file("events-page.txt"))
 
 
 # PS 6.3
@@ -248,8 +250,9 @@ def safe_load_file(file_name):
 def extract_scripts(html_string):
     pattern = r"<script\s.*<\/script>"
     matches = re.findall(pattern, html_string)
-    for match in matches:
-        print(match)
+    # for match in matches:
+    #     print(match)
+    return matches
 
 # script_list = extract_scripts(safe_load_file("events-page.txt"))
 # print(len(script_list))
@@ -288,7 +291,13 @@ def extract_scripts(html_string):
 
 
 def extract_social_media_links(html_string):
-    pass
+    pattern = r"(?=<a aria).*(https.*uddy).*"
+    matches = re.findall(pattern, html_string)
+    return matches
+    
+# html_string = safe_load_file("events-page.txt")
+# links = extract_social_media_links(html_string)
+# print(links)
 
 
 # PS 6.5
@@ -313,15 +322,39 @@ def extract_social_media_links(html_string):
 
 
 def extract_event_names(html_string):
-    pass
+    pattern = r"<a itemprop=\"url\" href=\".*\".*\s*.*\"name\">(.*)<\/span>"
+    matches = re.findall(pattern, html_string)
+    # for match in matches:
+    #     print(match)
+    return matches
+
+# events_page = safe_load_file("events-page.txt")
+# names = extract_event_names(events_page)
+# print(len(names))
 
 
 def extract_event_dates(html_string):
-    pass
+    pattern = r"meta date\'>(.*, \d\d\d\d)<\/p>.*"
+    matches = re.findall(pattern, html_string)
+    # for match in matches:
+    #     print(match)
+    return matches
+
+# events_page = safe_load_file("events-page.txt")
+# dates = extract_event_dates(events_page)
+# print(len(dates))
 
 
 def extract_event_links(html_string):
-    pass
+    pattern = r"<a itemprop=\"url\" href=\"(.*)\""
+    matches = re.findall(pattern, html_string)
+    # for match in matches:
+    #     print(match)
+    return matches
+
+# events_page = safe_load_file("events-page.txt")
+# links = extract_event_links(events_page)
+# print(len(links))
 
 
 # PS 6.6
@@ -344,12 +377,34 @@ def extract_event_links(html_string):
 # {'February': 15, 'March': 16, 'April': 21, 'January': 4, 'December': 4, 'November': 15, 'October': 21, 'September': 17, 'August': 1, 'May': 2}
 
 
-def extract_months(dates_list):
-    pass
+# doesn't work :( 
+# i tried to make this work forver, but it kept giving me errors so, sorry
 
+# def extract_months(dates_list):
+#     pattern = "meta date\'>.*, (\D*) .*, \d\d\d\d<\/p>.*"
+#     matches = re.findall(pattern, dates_list)
+#     # for match in matches:
+#     #     print(match)
+#     return (matches)
 
-def events_per_month(dates_list):
-    pass
+# def events_per_month(dates_list):
+#     pattern = ".*, (\D*) .*, \d\d\d\d"
+#     matches = re.findall(pattern, dates_list)
+#     dict2= {}
+#     for match in matches:
+#         if match not in dict2:
+#             dict2[match] = matches.count(match)
+#         else:
+#             continue
+#     return dict2
+
+# dates = events_per_month(extract_event_dates(safe_load_file("events-page.txt")))
+# print(dates)
+# events_per_month(dates)
+
+# events_per_month(["Monday, February 6, 2023", "Monday, February 13, 2023", "Tuesday, January 10, 2023"])
+
+# events_per_month(extract_event_dates(safe_load_file("events-page.txt")))
 
 
 # PS 6.7
@@ -398,7 +453,21 @@ def events_per_month(dates_list):
 
 
 def make_events_report(html_string):
-    pass
+    name = extract_event_names(html_string)
+    date = extract_event_dates(html_string)
+    link = extract_event_links(html_string)
+    # no month because it doesn't work 
+    # month = extract_months(extract_event_dates(html_string))
+
+    # everything works, except for the 6.6 part so i just left that out of this part 
+    with open('events-report.csv', 'w', newline = '') as csvfile:
+        writer = csv.writer(csvfile, delimiter=",", quoting=csv.QUOTE_NONNUMERIC)
+        row_list = [['EventName', 'URL', 'Date', 'Month', 'EventThisMonth']]
+        for i in range(len(name)):
+            row_list.append([name[i], link[i], date[i]])
+        writer.writerows(row_list)
+        
+# make_events_report(safe_load_file("events_page.txt"))
 
 
 # PS 6.8 - Complete the Analysis!
@@ -411,23 +480,23 @@ def make_events_report(html_string):
 # `{username}_ps6.py` on Canvas.
 #
 #
-# if __name__ == "__main__":
-#
-#     from pprint import pprint
-#
-#     for m in ["Ana", "Bob", "Cpc"]:
-#         # These should return/print something
-#         print(lesson_5(m))
-#     for m in ["aax", "bby", "ccz"]:
-#         # These should return/print `None`
-#         print(lesson_5(m))
-#
-#     events_page = safe_load_file("events-page.txt")
-#
-#     pprint(extract_scripts(events_page))
-#     pprint(extract_social_media_links(events_page))
-#
-#     make_events_report(events_page)
+if __name__ == "__main__":
+
+    from pprint import pprint
+
+    for m in ["Ana", "Bob", "Cpc"]:
+        # These should return/print something
+        print(lesson_5(m))
+    for m in ["aax", "bby", "ccz"]:
+        # These should return/print `None`
+        print(lesson_5(m))
+
+    events_page = safe_load_file("events-page.txt")
+
+    pprint(extract_scripts(events_page))
+    pprint(extract_social_media_links(events_page))
+
+    make_events_report(events_page)
 
 
 # Just for Fun - Regular Languages and Context-Free Languages
